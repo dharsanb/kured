@@ -1,5 +1,5 @@
 .DEFAULT: all
-.PHONY: all clean image minikube-publish manifest test kured-all lint 
+.PHONY: all clean image minikube-publish manifest test kured-all lint lint-docs lint-goreleaser
 
 DH_ORG ?= kubereboot
 VERSION=$(shell git rev-parse --short HEAD)
@@ -70,3 +70,7 @@ lint:
 lint-docs:
 	@echo "Running lychee"
 	mise x lychee@latest -- lychee --verbose --no-progress '*.md' '*.yaml' '*/*/*.go' --exclude-link-local
+
+lint-goreleaser:
+	@echo "Checking goreleaser"
+	goreleaser check
