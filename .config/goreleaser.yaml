@@ -1,0 +1,58 @@
+version: 2
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - id: kured
+    main: ./cmd/kured
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+      - "386"
+    goarm:
+      - "6"
+      - "7"
+    ldflags:
+      - -s -w -X main.version={{ if .IsSnapshot }}{{ .ShortCommit }}{{ else }}{{ .Version }}{{ end }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+
+dockers_v2:
+  - id: kured
+    ids:
+      - kured
+    images:
+      - ghcr.io/{{ .Env.IMAGE_NAME }}
+    tags:
+      - "{{ .ShortCommit }}"
+      - "{{ .Version }}"
+
+    labels:
+      "org.opencontainers.image.description": "My software"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/arm/v7
+      - linux/arm/v6
+      - linux/386
+    disable: "{{ .IsSnapshot }}"
+
+snapshot:
+  version_template: "{{ .ShortCommit }}"
+
+release:
+  disable: true
+
+changelog:
+  disable: true
