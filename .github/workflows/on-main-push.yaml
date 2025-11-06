@@ -67,24 +67,4 @@ jobs:
         run: make kured-release-snapshot
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Build image
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
-        with:
-          context: .
-          platforms: linux/arm64, linux/amd64, linux/arm/v7, linux/arm/v6, linux/386
-          push: true
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_short }}
-
-      - name: Generate SBOM
-        run: |
-          syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_short }} -o spdx > kured.sbom
-
-      - name: Sign and attest artifacts
-        run: |
-          cosign sign -y -r ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_short }}
-          cosign sign-blob -y --output-signature kured.sbom.sig --output-certificate kured.sbom.pem kured.sbom
-          cosign attest -y --type spdx --predicate kured.sbom ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_short }}
-          cosign attach sbom --type spdx --sbom kured.sbom ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_short }}
+          DOCKER_LABELS: ${{ steps.meta.outputs.labels }}
