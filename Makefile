@@ -27,11 +27,8 @@ kured-release-tag:
 kured-release-snapshot:
 	goreleaser release --clean --snapshot
 
-image: kured
-	$(SUDO) docker buildx build --no-cache --load -t ghcr.io/$(DH_ORG)/kured:$(VERSION) .
-
-dev-image: image
-	$(SUDO) docker tag ghcr.io/$(DH_ORG)/kured:$(VERSION) kured:dev
+dev-image: kured-release-snapshot
+	$(SUDO) docker tag ghcr.io/$(DH_ORG)/kured:$(VERSION)-amd64 kured:dev
 
 dev-manifest:
 	# basic e2e scenario

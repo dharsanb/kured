@@ -32,6 +32,7 @@ dockers_v2:
     tags:
       - "{{ .ShortCommit }}"
       - "{{ .Version }}"
+      - "{{ if .IsSnapshot }}dev{{ end }}"
 
     labels:
       "org.opencontainers.image.description": "My software"
@@ -46,7 +47,6 @@ dockers_v2:
       - linux/arm/v7
       - linux/arm/v6
       - linux/386
-    disable: "{{ .IsSnapshot }}"
 
 docker_signs:
   - ids:
