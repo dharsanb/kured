@@ -7,7 +7,7 @@ on:
 jobs:
   periodics-gotest:
     name: Run go tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -33,7 +33,7 @@ jobs:
 
   periodics-mark-stale:
     name: Mark stale issues and PRs
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     # Stale, by default, waits for 60 days before marking PR/issues as stale and closes them after 21 days.
     # Do not expire the first issues that would allow the community to grow.
@@ -55,7 +55,7 @@ jobs:
 
   check-docs-links:
     name: Check docs for incorrect links
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: Harden Runner
       uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -74,7 +74,7 @@ jobs:
 
   vuln-scan:
     name: Build image and scan it against known vulnerabilities
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -88,6 +88,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:

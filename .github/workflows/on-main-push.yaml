@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: "kured"
   DH_ORG: ${{ github.repository_owner }}
 
 permissions:
@@ -17,7 +17,7 @@ permissions:
 jobs:
   tag-scan-and-push-final-image:
     name: "Build, scan, and publish tagged image"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       id-token: write
       contents: write
@@ -35,6 +35,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:

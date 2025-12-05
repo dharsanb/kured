@@ -6,7 +6,7 @@ on:
 jobs:
   pr-short-tests:
     name: Run short go tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -21,6 +21,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:
@@ -40,7 +41,10 @@ jobs:
   # should trigger a bump of the image in build/.
   pr-vuln-scan:
     name: Build image and scan it against known vulnerabilities
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      DH_ORG: ${{ github.repository_owner }}
+      IMAGE_NAME: "kured"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -54,6 +58,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:
@@ -70,7 +75,7 @@ jobs:
         id: tags
 
       - name: Build image
-        run: VERSION="${{ steps.tags.outputs.sha_short }}" DH_ORG="${{ github.repository_owner }}" make image
+        run: make kured-release-snapshot
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
@@ -91,7 +96,10 @@ jobs:
   # This test uses the "command" reboot-method.
   e2e-manifests:
     name: End-to-End test with kured with code and manifests from HEAD
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      DH_ORG: ${{ github.repository_owner }}
+      IMAGE_NAME: "kured"
     strategy:
       fail-fast: false
       matrix:
@@ -117,6 +125,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:
@@ -138,7 +147,10 @@ jobs:
 
   e2e-tests-singleversion:
     name: End-to-End test targetting a single version of kubernetes
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      DH_ORG: ${{ github.repository_owner }}
+      IMAGE_NAME: "kured"
     strategy:
       fail-fast: false
       matrix:
@@ -159,6 +171,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           check-latest: true
+          cache: false
 
       - uses: jdx/mise-action@e3d7b8d67a7958d1207f6ed871e83b1ea780e7b0 # v3.3.1
         with:
